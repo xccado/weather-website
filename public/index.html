@@ -3,58 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能天气查询</title>
+    <title>天气全景 - 实时天气查询</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>智能天气查询</h1>
-        <div class="search-box">
-            <input type="text" id="locationInput" placeholder="输入地名或经纬度（如：北京 或 39.90,116.40）">
-            <button onclick="getLocation()"><i class="fas fa-location-arrow"></i></button>
-            <button onclick="getWeather()">查询天气</button>
-        </div>
-        <div class="weather-card" id="weatherCard">
-            <div class="loading-animation">
-                <div class="spinner"></div>
-                <div class="pulse"></div>
+    <div class="weather-container">
+        <!-- 顶部标题和搜索框 -->
+        <header class="weather-header">
+            <h1>
+                <i class="fas fa-cloud-sun"></i>
+                天气全景
+                <span class="beta-tag">Beta</span>
+            </h1>
+            <div class="search-container">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        id="locationInput" 
+                        placeholder="输入城市名或经纬度..."
+                        aria-label="输入城市名或经纬度"
+                    >
+                    <div class="search-buttons">
+                        <button class="icon-btn" onclick="getLocation()" title="获取当前位置">
+                            <i class="fas fa-location-arrow"></i>
+                        </button>
+                        <button class="primary-btn" onclick="getWeather()">
+                            <i class="fas fa-search"></i>
+                            查询天气
+                        </button>
+                    </div>
+                </div>
+                <p class="input-hint">
+                    <i class="fas fa-info-circle"></i>
+                    示例：北京 / 39.90, 116.40
+                </p>
             </div>
-            <div class="weather-content" style="display: none;">
-                <h2 id="location">未知位置</h2>
-                <div class="main-info">
-                    <div id="temperature" class="temperature">--</div>
-                    <div id="weatherIcon" class="weather-icon"></div>
-                </div>
-                <div class="details">
-                    <div><i class="fas fa-tint"></i> 湿度: <span id="humidity">--</span>%</div>
-                    <div><i class="fas fa-smog"></i> 空气质量: <span id="aqi">--</span></div>
-                    <div><i class="fas fa-wind"></i> 风速: <span id="wind">--</span></div>
-                    <div><i class="fas fa-sun"></i> 紫外线: <span id="uv">--</span></div>
-                </div>
-                <div class="additional-info">
-                    <div class="info-box">
-                        <i class="fas fa-compass"></i>
-                        <span>风向：</span>
-                        <span id="windDirection">--</span>
+        </header>
+
+        <!-- 主天气卡片 -->
+        <main class="weather-main">
+            <div class="glass-card weather-card" id="weatherCard">
+                <!-- 加载状态 -->
+                <div class="loading-animation">
+                    <div class="pulse-loader">
+                        <div class="pulse-dot"></div>
+                        <div class="pulse-dot"></div>
+                        <div class="pulse-dot"></div>
                     </div>
-                    <div class="info-box">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>气压：</span>
-                        <span id="pressure">--</span>hPa
-                    </div>
-                    <div class="info-box">
-                        <i class="fas fa-eye"></i>
-                        <span>能见度：</span>
-                        <span id="visibility">--"></span>
-                    </div>
+                    <p>天气数据加载中...</p>
                 </div>
-                <canvas id="temperatureChart"></canvas>
+
+                <!-- 天气内容 -->
+                <div class="weather-content">
+                    <!-- 主信息区 -->
+                    <section class="current-weather">
+                        <h2 class="location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="location">正在定位...</span>
+                        </h2>
+                        <div class="primary-info">
+                            <div class="temperature-block">
+                                <div id="temperature" class="temperature">--</div>
+                                <div class="weather-condition">
+                                    <div id="weatherIcon" class="weather-icon"></div>
+                                    <span id="weatherText">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 详情网格 -->
+                    <div class="detail-grid">
+                        <div class="detail-card">
+                            <i class="fas fa-tint"></i>
+                            <div class="detail-content">
+                                <label>湿度</label>
+                                <div id="humidity" class="detail-value">--%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-card">
+                            <i class="fas fa-wind"></i>
+                            <div class="detail-content">
+                                <label>风速</label>
+                                <div id="wind" class="detail-value">-- km/h</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <i class="fas fa-thermometer-half"></i>
+                            <div class="detail-content">
+                                <label>体感温度</label>
+                                <div id="feelsLike" class="detail-value">-- °C</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <i class="fas fa-eye"></i>
+                            <div class="detail-content">
+                                <label>能见度</label>
+                                <div id="visibility" class="detail-value">-- km</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 温度图表 -->
+                    <section class="chart-section">
+                        <h3>
+                            <i class="fas fa-chart-line"></i>
+                            24小时温度趋势
+                        </h3>
+                        <canvas id="temperatureChart"></canvas>
+                    </section>
+                </div>
+
+                <!-- 错误提示 -->
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p class="error-text"></p>
+                </div>
             </div>
-            <div class="error" style="display: none;"></div>
-        </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="weather-footer">
+            <p>数据来源：彩云天气 & 腾讯位置服务</p>
+            <p>&copy; 2023 天气全景 | 探索世界的温度</p>
+        </footer>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
