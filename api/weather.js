@@ -1,10 +1,15 @@
 const fetch = require('node-fetch');
 
+function getWindDirection(degree) {
+    const directions = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
+    const index = Math.round((degree % 360) / 45) % 8;
+    return directions[index];
+}
+
 module.exports = async (req, res) => {
     try {
         let { lat, lng } = req.query;
         
-        // 如果没有坐标参数，通过IP获取位置
         if (!lat || !lng) {
             const ipResponse = await fetch('https://ipapi.co/json/');
             const ipData = await ipResponse.json();
@@ -20,26 +25,29 @@ module.exports = async (req, res) => {
         
         const data = await response.json();
         
-        // 天气代码到中文的映射
         const weatherMap = {
-            0: '晴',
-            1: '多云',
-            2: '阴',
-            3: '阵雨',
-            4: '雷阵雨',
-            5: '雪'
+            0: '晴', 1: '多云', 2: '阴', 3: '阵雨', 4: '雷阵雨', 5: '雪'
         };
 
-        // 构造响应数据
         const result = {
             location: data.result.forecast_keypoint,
             temperature: data.result.realtime.temperature.toFixed(1),
             weatherCode: data.result.realtime.skycon,
             weather: weatherMap[data.result.realtime.skycon] || '未知',
+            humidity: (data.result.realtime.humidity * 100).toFixed(0),
             precip: (data.result.realtime.precipitation.local.intensity * 100).toFixed(0),
             aqi: data.result.realtime.air_quality.description.chn,
-            wind: `${data.result.realtime.wind.speed.toFixed(1)} km/h (${data.result.realtime.wind.direction}°)`,
-            uv: data.result.realtime.life_index.ultraviolet.desc
+            wind: `${data.result.realtime.wind.speed.toFixed(1)} km/h`,
+            uv: data.result.realtime.life_index.ultraviolet.desc,
+            pressure: data.result.realtime.pres.toFixed(1),
+            windDirection: getWindDirection(data.result.realtime.wind.direction),
+            visibility: (data.result.realtime.visibility / 1000).toFixed(1) + 'km',
+            hourly: data.result.hourly.temperature
+                .slice(0, 24)
+                .map(({ datetime, value }) => ({
+                    time: datetime,
+                    temp: value
+                }))
         };
 
         res.status(200).json(result);
