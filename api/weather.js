@@ -46,7 +46,10 @@ module.exports = async (req, res) => {
         if (!response.ok) throw new Error('天气API请求失败');
         
         const data = await response.json();
-
+// 新增响应数据验证
+        if (!data?.result?.realtime) {
+            throw new Error('彩云天气返回异常数据: ' + JSON.stringify(data));
+        }
         const weatherMap = {
             CLEAR_DAY: ['晴', 0],
             PARTLY_CLOUDY_DAY: ['多云', 1],
@@ -73,6 +76,18 @@ module.exports = async (req, res) => {
 
         res.status(200).json(result);
     } catch (error) {
+console.error('完整错误日志:', {
+            timestamp: new Date().toISOString(),
+            query: req.query,
+            error: error.message,
+            stack: error.stack
+        });
+        res.status(500).json({ 
+            error: '服务器数据处理失败',
+            technical: error.message 
+        });
+    }
+};
         res.status(500).json({ 
             error: error.message,
             suggestion: '请确认：1.输入格式正确 2.服务密钥有效'
