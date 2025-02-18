@@ -1,58 +1,35 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <title>天气通 ☀️🌧️⛅</title>
-    <link href="/css/style.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <h1>天气通 🌦️</h1>
-        
-        <form action="/weather" method="POST">
-            <input type="text" name="address" placeholder="输入城市或地址 🗺️" required>
-            <button type="submit">查询天气 🔍</button>
-        </form>
+<%- include('partials/header') %>
 
-        <% if (error) { %>
-            <div class="error"><%= error %></div>
-        <% } %>
-
-        <% if (locals.current) { %>
-            <div class="weather-card">
-                <h2><%= location %> · 当前天气 <%= current.emoji %></h2>
-                <div class="current-weather">
-                    <div>温度：🌡️ <%= current.temperature %>℃</div>
-                    <div>湿度：💧 <%= (current.humidity * 100).toFixed(0) %>%</div>
-                    <div>体感温度：😓 <%= current.apparent_temperature %>℃</div>
-                    <div>降水量：🌧️ <%= current.precipitation.local.intensity %> mm/h</div>
-                </div>
-
-                <h3>🗓️ 未来24小时预报</h3>
-                <div class="hourly">
-                    <% hourly.temperature.slice(0, 24).forEach((item, index) => { %>
-                        <div class="hour">
-                            <div><%= new Date(item.datetime).getHours() %>时</div>
-                            <div><%= emojiMap[hourly.skycon[index].value] %> <%= item.value %>℃</div>
-                        </div>
-                    <% }) %>
-                </div>
-
-                <h3>⚠️ 天气预警</h3>
-                <% if (alerts.length > 0) { %>
-                    <div class="alerts">
-                        <% alerts.forEach(alert => { %>
-                            <div class="alert">
-                                <strong><%= alert.title %></strong>
-                                <p><%= alert.description %></p>
-                            </div>
-                        <% }) %>
-                    </div>
-                <% } else { %>
-                    <div>当前没有天气预警 😊</div>
-                <% } %>
-            </div>
-        <% } %>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">天气查询系统</h1>
+    
+    <div class="search-box mb-4">
+        <input type="text" id="locationInput" class="form-control" placeholder="输入城市或地址">
+        <div id="suggestions" class="suggestions-list"></div>
     </div>
-</body>
-</html>
+
+    <div id="weatherData" class="weather-card">
+        <!-- 实时天气 -->
+        <div class="realtime-weather">
+            <h3>当前天气</h3>
+            <div id="realtimeInfo"></div>
+        </div>
+
+        <!-- 温度图表 -->
+        <canvas id="temperatureChart"></canvas>
+
+        <!-- 天气预报 -->
+        <div class="forecast">
+            <h3>未来7天预报</h3>
+            <div id="dailyForecast"></div>
+        </div>
+
+        <!-- 天气预警 -->
+        <div class="alerts">
+            <h3>气象预警</h3>
+            <div id="weatherAlerts"></div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
