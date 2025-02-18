@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import axios from 'axios';
+
 const router = express.Router();
-const axios = require('axios');
 
 // 腾讯位置服务API
 const geocode = async (address) => {
@@ -57,7 +58,6 @@ router.get('/weather', async (req, res) => {
     const { lat, lng, city } = req.query;
     const weather = await getWeatherData(lng, lat);
     
-    // 天气表情映射
     const emojiMap = {
       'CLEAR_DAY': '☀️',
       'CLEAR_NIGHT': '🌙',
