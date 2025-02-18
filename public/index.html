@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>彩云天气查询</title>
+    <title>智能天气查询</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>天气查询</h1>
+        <h1>智能天气查询</h1>
         <div class="search-box">
-            <input type="text" id="coordinates" placeholder="输入经度,纬度 或留空自动定位">
+            <input type="text" id="locationInput" placeholder="输入地名或经纬度（如：北京 或 39.90,116.40）">
             <button onclick="getLocation()"><i class="fas fa-location-arrow"></i></button>
             <button onclick="getWeather()">查询天气</button>
         </div>
@@ -47,7 +47,7 @@
                     <div class="info-box">
                         <i class="fas fa-eye"></i>
                         <span>能见度：</span>
-                        <span id="visibility">--</span>
+                        <span id="visibility">--"></span>
                     </div>
                 </div>
                 <canvas id="temperatureChart"></canvas>
