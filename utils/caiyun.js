@@ -35,6 +35,7 @@ const processCurrent = (result) => ({
   windSpeed: result.realtime.wind.speed.toFixed(1),
   pressure: result.realtime.pressure,
   skycon: result.realtime.skycon,
+  emoji: WEATHER_EMOJIS[result.realtime.skycon] || '🌈',  // 新增这行
   description: result.realtime.description,
   airQuality: result.realtime.air_quality.aqi.chn
 });
@@ -54,6 +55,7 @@ const processDaily = (result) => ({
     maxTemp: Math.round(temp.max),
     minTemp: Math.round(temp.min),
     skycon: result.daily.skycon[index].value,
+    emoji: WEATHER_EMOJIS[result.daily.skycon[index].value] || '🌈',  // 新增这行
     description: result.daily.skycon[index].desc
   }))
 });
