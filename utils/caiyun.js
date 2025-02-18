@@ -42,9 +42,12 @@ const processCurrent = (result) => ({
 
 // 处理每小时数据（图表用）
 const processHourly = (result) => ({
-  temperature: result.hourly.temperature.slice(0, 24),
-  time: result.hourly.temperature.map(item => 
-    new Date(item.datetime).toLocaleTimeString([], { hour: '2-digit' })
+  temperature: result.hourly.temperature.slice(0, 24).map(item => item.value),
+  time: result.hourly.temperature.slice(0, 24).map(item => 
+    new Date(item.datetime).toLocaleTimeString('zh-CN', { 
+      hour: '2-digit',
+      hour12: false 
+    })
   )
 });
 
