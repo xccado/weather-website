@@ -1,159 +1,58 @@
-<%- include('partials/header') %>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>天气通 ☀️🌧️⛅</title>
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>天气通 🌦️</h1>
+        
+        <form action="/weather" method="POST">
+            <input type="text" name="address" placeholder="输入城市或地址 🗺️" required>
+            <button type="submit">查询天气 🔍</button>
+        </form>
 
-<div class="container mt-5">
-  <div class="weather-card p-4 rounded shadow">
-    <form method="POST" class="mb-4">
-      <div class="input-group">
-        <input type="text" 
-               name="location" 
-               class="form-control" 
-               placeholder="输入城市或地址（例如：北京市海淀区）"
-               required>
-        <button type="submit" class="btn btn-primary">查询天气</button>
-      </div>
-    </form>
+        <% if (error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
 
-    <% if (error) { %>
-      <div class="alert alert-danger"><%= error %></div>
-    <% } %>
-
-    <% if (weather) { %>
-      <!-- 当前天气 -->
-      <div class="current-weather">
-        <h2 class="display-4">
-          <%= weather.current.emoji %> 
-          <%= weather.current.temp %>℃
-        </h2>
-        <p class="lead"><%= weather.current.description %></p>
-        <div class="row">
-          <div class="col-6">
-            体感温度：<%= weather.current.feelsLike %>℃<br>
-            湿度：<%= weather.current.humidity %>%
-          </div>
-          <div class="col-6">
-            风速：<%= weather.current.windSpeed %> 米/秒<br>
-            气压：<%= weather.current.pressure %> hPa
-          </div>
-        </div>
-      </div>
-
-      <!-- 温度图表 -->
-<script>
-  <% if (weather) { %>
-    window.onload = function() {
-      const chartEl = document.getElementById('temperature-chart');
-      if (!chartEl) {
-        console.error('找不到图表容器');
-        return;
-      }
-
-      new Chart(chartEl.getContext('2d'), {
-        type: 'line',
-        data: {
-          labels: <%- JSON.stringify(weather.hourly.time) %>,
-          datasets: [{
-            label: '温度 (°C)',
-            data: <%- JSON.stringify(weather.hourly.temperature) %>,
-            borderColor: '#dc3545',
-            tension: 0.3,
-            borderWidth: 2,
-            pointRadius: 3
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-              ticks: { maxRotation: 0 }
-            },
-            y: {
-              title: {
-                display: true,
-                text: '温度 (°C)'
-              }
-            }
-          }
-        }
-      });
-    };
-  <% } %>
-</script>>
-
-      <!-- 预警信息 -->
-      <% if (weather.alert) { %>
-        <div class="alert alert-danger mt-4">
-          <h5>⚠️ 气象预警</h5>
-          <% weather.alert.forEach(alert => { %>
-            <p><strong><%= alert.title %></strong><br>
-            <%= alert.description %></p>
-          <% }); %>
-        </div>
-      <% } %>
-
-      <!-- 未来7天预报 -->
-      <div class="mt-4">
-        <h4>未来7天预报</h4>
-        <div class="row">
-          <% weather.daily.forecast.forEach(day => { %>
-            <div class="col-md-4 mb-3">
-              <div class="card">
-                <div class="card-body">
-                  <h5><%= day.date %></h5>
-                  <p class="display-6">
-                    <%= day.emoji %>
-                    <%= day.minTemp %>℃ ~ <%= day.maxTemp %>℃
-                  </p>
-                  <p><%= day.description %></p>
+        <% if (locals.current) { %>
+            <div class="weather-card">
+                <h2><%= location %> · 当前天气 <%= current.emoji %></h2>
+                <div class="current-weather">
+                    <div>温度：🌡️ <%= current.temperature %>℃</div>
+                    <div>湿度：💧 <%= (current.humidity * 100).toFixed(0) %>%</div>
+                    <div>体感温度：😓 <%= current.apparent_temperature %>℃</div>
+                    <div>降水量：🌧️ <%= current.precipitation.local.intensity %> mm/h</div>
                 </div>
-              </div>
+
+                <h3>🗓️ 未来24小时预报</h3>
+                <div class="hourly">
+                    <% hourly.temperature.slice(0, 24).forEach((item, index) => { %>
+                        <div class="hour">
+                            <div><%= new Date(item.datetime).getHours() %>时</div>
+                            <div><%= emojiMap[hourly.skycon[index].value] %> <%= item.value %>℃</div>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <h3>⚠️ 天气预警</h3>
+                <% if (alerts.length > 0) { %>
+                    <div class="alerts">
+                        <% alerts.forEach(alert => { %>
+                            <div class="alert">
+                                <strong><%= alert.title %></strong>
+                                <p><%= alert.description %></p>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div>当前没有天气预警 😊</div>
+                <% } %>
             </div>
-          <% }); %>
-        </div>
-      </div>
-    <% } %>
-  </div>
-</div>
-
-<script>
-  <% if (weather) { %>
-    document.addEventListener('DOMContentLoaded', function() {
-      const ctx = document.getElementById('temperature-chart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: <%- JSON.stringify(weather.hourly.time) %>,
-          datasets: [{
-            label: '温度 (°C)',
-            data: <%- JSON.stringify(weather.hourly.temperature) %>,
-            borderColor: '#dc3545',
-            fill: false,
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              title: {
-                display: true,
-                text: '温度 (°C)'
-              }
-            },
-            x: {
-              ticks: {
-                autoSkip: true,
-                maxTicksLimit: 12
-              }
-            }
-          }
-        }
-      });
-    });
-  <% } %>
-</script>
-
-<%- include('partials/footer') %>
+        <% } %>
+    </div>
+</body>
+</html>
