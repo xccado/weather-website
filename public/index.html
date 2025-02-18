@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>彩云天气查询</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>天气查询</h1>
+        <div class="search-box">
+            <input type="text" id="coordinates" placeholder="输入经度,纬度 或留空自动定位">
+            <button onclick="getLocation()"><i class="fas fa-location-arrow"></i></button>
+            <button onclick="getWeather()">查询天气</button>
+        </div>
+        <div class="weather-card" id="weatherCard">
+            <div class="loading">加载中...</div>
+            <div class="weather-content" style="display: none;">
+                <h2 id="location">未知位置</h2>
+                <div class="main-info">
+                    <div id="temperature" class="temperature">--</div>
+                    <div id="weatherIcon" class="weather-icon"></div>
+                </div>
+                <div class="details">
+                    <div><i class="fas fa-tint"></i> 降水概率: <span id="precip">--</span></div>
+                    <div><i class="fas fa-smog"></i> 空气质量: <span id="aqi">--</span></div>
+                    <div><i class="fas fa-wind"></i> 风速: <span id="wind">--</span></div>
+                    <div><i class="fas fa-sun"></i> 紫外线: <span id="uv">--</span></div>
+                </div>
+            </div>
+            <div class="error" style="display: none;"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
