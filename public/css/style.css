@@ -35,3 +35,37 @@
     border-radius: 8px;
     margin-top: 2rem;
 }
+
+/* 补充导航栏样式 */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* 主内容区域最小高度 */
+.container {
+    min-height: calc(100vh - 160px);
+}
+
+/* 天气卡片增强样式 */
+.weather-card {
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    margin-bottom: 2rem;
+}
+
+/* 温度图表容器 */
+#temperatureChart {
+    height: 400px !important;
+    margin: 2rem 0;
+}
+
+/* 预警信息样式 */
+.alert-card {
+    background: #fff3cd;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1.5rem;
+}
