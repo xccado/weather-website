@@ -26,3 +26,16 @@
   position: relative;
   margin: 20px auto;
 }
+
+/* 添加以下内容 */
+#temperature-chart {
+  width: 100% !important;
+  height: 300px !important;
+  margin: 20px 0;
+}
+
+@media (max-width: 768px) {
+  #temperature-chart {
+    height: 250px !important;
+  }
+}
