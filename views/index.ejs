@@ -1,0 +1,99 @@
+<%- include('partials/header') %>
+
+<div class="container mt-5">
+  <div class="weather-card p-4 rounded shadow">
+    <form method="POST" class="mb-4">
+      <div class="input-group">
+        <input type="text" 
+               name="location" 
+               class="form-control" 
+               placeholder="输入城市或地址（例如：北京市海淀区）"
+               required>
+        <button type="submit" class="btn btn-primary">查询天气</button>
+      </div>
+    </form>
+
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <% if (weather) { %>
+      <!-- 当前天气 -->
+      <div class="current-weather">
+        <h2 class="display-4">
+          <%= WEATHER_EMOJIS[weather.current.skycon] %> 
+          <%= weather.current.temp %>℃
+        </h2>
+        <p class="lead"><%= weather.current.description %></p>
+        <div class="row">
+          <div class="col-6">
+            体感温度：<%= weather.current.feelsLike %>℃<br>
+            湿度：<%= weather.current.humidity %>%
+          </div>
+          <div class="col-6">
+            风速：<%= weather.current.windSpeed %> 米/秒<br>
+            气压：<%= weather.current.pressure %> hPa
+          </div>
+        </div>
+      </div>
+
+      <!-- 温度图表 -->
+      <div class="mt-4">
+        <h4>24小时温度变化</h4>
+        <canvas id="temperature-chart"></canvas>
+      </div>
+
+      <!-- 预警信息 -->
+      <% if (weather.alert) { %>
+        <div class="alert alert-danger mt-4">
+          <h5>⚠️ 气象预警</h5>
+          <% weather.alert.forEach(alert => { %>
+            <p><strong><%= alert.title %></strong><br>
+            <%= alert.description %></p>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <!-- 未来7天预报 -->
+      <div class="mt-4">
+        <h4>未来7天预报</h4>
+        <div class="row">
+          <% weather.daily.forecast.forEach(day => { %>
+            <div class="col-md-4 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <h5><%= day.date %></h5>
+                  <p class="display-6">
+                    <%= WEATHER_EMOJIS[day.skycon] %>
+                    <%= day.minTemp %>℃ ~ <%= day.maxTemp %>℃
+                  </p>
+                  <p><%= day.description %></p>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<script>
+  <% if (weather) { %>
+    const ctx = document.getElementById('temperature-chart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: <%- JSON.stringify(weather.hourly.time) %>,
+        datasets: [{
+          label: '温度 (°C)',
+          data: <%- JSON.stringify(weather.hourly.temperature.map(t => t.value)) %>,
+          borderColor: '#dc3545',
+          tension: 0.4
+        }]
+      }
+    });
+  <% } %>
+</script>
+
+<%- include('partials/footer') %>
