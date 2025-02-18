@@ -21,7 +21,7 @@
       <!-- 当前天气 -->
       <div class="current-weather">
         <h2 class="display-4">
-          <%= WEATHER_EMOJIS[weather.current.skycon] %> 
+          <%= weather.current.emoji %> 
           <%= weather.current.temp %>℃
         </h2>
         <p class="lead"><%= weather.current.description %></p>
@@ -64,7 +64,7 @@
                 <div class="card-body">
                   <h5><%= day.date %></h5>
                   <p class="display-6">
-                    <%= WEATHER_EMOJIS[day.skycon] %>
+                    <%= day.emoji %>
                     <%= day.minTemp %>℃ ~ <%= day.maxTemp %>℃
                   </p>
                   <p><%= day.description %></p>
