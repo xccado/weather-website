@@ -2,38 +2,30 @@ async function getLocation() {
     try {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
-        document.getElementById('coordinates').value = `${data.latitude},${data.longitude}`;
+        document.getElementById('locationInput').value = `${data.latitude},${data.longitude}`;
     } catch (error) {
-        showError('自动定位失败，请手动输入坐标');
+        showError('自动定位失败，请手动输入');
     }
 }
 
-function validateCoordinates(input) {
-    const coordPattern = /^-?\d{1,3}(\.\d+)?,\s*-?\d{1,3}(\.\d+)?$/;
+function validateInput(input) {
     if (!input) return true;
     
-    if (!coordPattern.test(input)) {
-        showError('请输入有效的经纬度格式（例：39.9042,116.4074）');
-        document.getElementById('coordinates').classList.add('input-error');
-        setTimeout(() => {
-            document.getElementById('coordinates').classList.remove('input-error');
-        }, 2000);
-        return false;
+    const coordPattern = /^-?\d{1,3}(\.\d+)?,\s*-?\d{1,3}(\.\d+)?$/;
+    if (coordPattern.test(input)) {
+        const [lat, lng] = input.split(',').map(Number);
+        if (Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+            showError('纬度范围：-90~90，经度范围：-180~180');
+            return false;
+        }
     }
-    
-    const [lat, lng] = input.split(',').map(Number);
-    if (Math.abs(lat) > 90 || Math.abs(lng) > 180) {
-        showError('纬度范围：-90~90，经度范围：-180~180');
-        return false;
-    }
-    
     return true;
 }
 
 async function getWeather() {
-    const input = document.getElementById('coordinates').value;
-    if (!validateCoordinates(input)) return;
-    
+    const input = document.getElementById('locationInput').value;
+    if (!validateInput(input)) return;
+
     const card = document.getElementById('weatherCard');
     const errorDiv = card.querySelector('.error');
     
@@ -42,14 +34,22 @@ async function getWeather() {
     errorDiv.style.display = 'none';
 
     try {
-        let url = '/api/weather';
+        const params = new URLSearchParams();
         if (input) {
-            const [lat, lng] = input.split(',');
-            url += `?lat=${lat}&lng=${lng}`;
+            if (input.includes(',')) {
+                const [lat, lng] = input.split(',');
+                params.append('lat', lat.trim());
+                params.append('lng', lng.trim());
+            } else {
+                params.append('address', input.trim());
+            }
         }
 
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('天气数据获取失败');
+        const response = await fetch(`/api/weather?${params}`);
+        if (!response.ok) {
+            const { error, suggestion } = await response.json();
+            throw new Error(`${error}，${suggestion || ''}`);
+        }
         
         const data = await response.json();
         updateWeatherUI(data);
@@ -61,6 +61,9 @@ async function getWeather() {
         toggleLoading(false);
     }
 }
+
+// 保留其余函数（toggleLoading/updateWeatherUI等）相同
+// 确保包含所有之前的图表和UI更新函数
 
 function toggleLoading(show) {
     const loader = document.querySelector('.loading-animation');
