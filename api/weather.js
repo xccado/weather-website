@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
-
+console.log('环境变量验证:');
+console.log('彩云密钥长度:', process.env.CY_API_KEY?.length || '未设置');
+console.log('腾讯密钥长度:', process.env.TENCENT_MAP_KEY?.length || '未设置');
 async function geocodeAddress(address) {
     const TENCENT_KEY = process.env.TENCENT_MAP_KEY;
     const url = `https://apis.map.qq.com/ws/geocoder/v1/?address=${encodeURIComponent(address)}&key=${TENCENT_KEY}`;
