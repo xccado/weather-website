@@ -1,0 +1,12 @@
+{
+    "name": "weather-website",
+    "version": "1.0.0",
+    "scripts": {
+        "dev": "vercel dev",
+        "start": "vercel start",
+        "build": "echo 'Building...'"
+    },
+    "dependencies": {
+        "@vercel/node": "^2.8.4"
+    }
+}
