@@ -1,18 +1,4 @@
 {
-    "rewrites": [
-        { "source": "/api/(.*)", "destination": "/api/weather" }
-    ],
-    "headers": [
-        {
-            "source": "/(.*)",
-            "headers": [
-                { "key": "Access-Control-Allow-Origin", "value": "*" },
-                { "key": "Cache-Control", "value": "s-maxage=300" }
-            ]
-        }
-    ]
-}
-{
   "headers": [{
     "source": "/api/(.*)",
     "headers": [
