@@ -1,0 +1,13 @@
+{
+    "name": "weather-website",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "vercel dev"
+    },
+    "dependencies": {
+        "node-fetch": "^2.6.7"
+    },
+    "devDependencies": {
+        "vercel": "^28.16.5"
+    }
+}
