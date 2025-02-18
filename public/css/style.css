@@ -15,3 +15,14 @@
   padding: 15px;
   border-radius: 8px;
 }
+
+/* 添加在文件末尾 */
+#temperature-chart {
+  min-height: 300px;
+  width: 100%;
+}
+
+.chart-container {
+  position: relative;
+  margin: 20px auto;
+}
