@@ -80,18 +80,38 @@
 
 <script>
   <% if (weather) { %>
-    const ctx = document.getElementById('temperature-chart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: <%- JSON.stringify(weather.hourly.time) %>,
-        datasets: [{
-          label: '温度 (°C)',
-          data: <%- JSON.stringify(weather.hourly.temperature.map(t => t.value)) %>,
-          borderColor: '#dc3545',
-          tension: 0.4
-        }]
-      }
+    document.addEventListener('DOMContentLoaded', function() {
+      const ctx = document.getElementById('temperature-chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: <%- JSON.stringify(weather.hourly.time) %>,
+          datasets: [{
+            label: '温度 (°C)',
+            data: <%- JSON.stringify(weather.hourly.temperature) %>,
+            borderColor: '#dc3545',
+            fill: false,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              title: {
+                display: true,
+                text: '温度 (°C)'
+              }
+            },
+            x: {
+              ticks: {
+                autoSkip: true,
+                maxTicksLimit: 12
+              }
+            }
+          }
+        }
+      });
     });
   <% } %>
 </script>
